@@ -1,23 +1,32 @@
 Overview
 --------
 
-This library supports guile-2.2 >= 2.1.3 and guile-3.0 >= 2.9.1.  It
-provides a thread safe event loop (event-loop.scm) with support for
-watches on ports/file descriptors and timeouts, and which permits
-events to be posted by other tasks.  This includes tasks running on
-other threads.
+This library provides a thread safe event loop for guile-2.2
+(event-loop.scm) with support for watches on ports/file descriptors
+and timeouts, and which permits events to be posted by other tasks.
+This includes tasks running on other threads.  It also provides a
+coroutines interface (coroutines.scm) which provides await semantics
+on such events, so as to avoid inversion of control (aka "callback
+hell"), and provision for using these in conjunction with
+guile-2.2/3.0's suspendable ports (await-ports.scm).  It requires
+guile-2.2 >= 2.1.3.
 
-It also provides a coroutines interface (coroutines.scm) which
-provides await semantics on such events, so as to avoid inversion of
-control (aka "callback hell"), and provision for using these in
-conjunction with guile-2.2/3.0's suspendable ports (await-ports.scm).
+This library (guile-a-sync2) also supports guile-3.0 >= 2.9.1, but
+when doing so uses guile's catch/throw interface for exceptions.  A
+separate guile-a-sync3 library is available for guile-3.0 which allows
+use of guile-3.0's exception objects; but if you want user code which
+will run with both guile-2.2 and guile-3.0, use this library instead.
 
 See the documentation mentioned below for further details, and the
 docs/example.scm and docs/example-glib.scm files.
 
 A separate guile-a-sync library is available for guile-2.0 here:
-https://github.com/ChrisVine/guile-a-sync .  This library and
-guile-a-sync for guile-2.0 are parallel installable.
+https://github.com/ChrisVine/guile-a-sync , and guile-a-sync3 is
+available here: https://github.com/ChrisVine/guile-a-sync3 .  This
+library (guile-a-sync2) and guile-a-sync are parallel installable.
+This library is also parallel installable with guile-a-sync3 where
+this library is compiled against guile-2.2, but not where this library
+is compiled against guile-3.0.
 
 Installation
 ------------
