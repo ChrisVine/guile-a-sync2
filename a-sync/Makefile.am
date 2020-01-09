@@ -1,5 +1,7 @@
 ## Process this file with automake to produce Makefile.in
 
+SUBDIRS = g-golf
+
 SOURCES = coroutines.scm event-loop.scm compose.scm await-ports.scm meeting.scm thread-pool.scm
 
 FULL_SOURCES = $(SOURCES) monotonic-time.scm
