@@ -1,4 +1,4 @@
-;; Copyright (C) 2020 Chris Vine
+;; Copyright (C) 2016 to 2020 Chris Vine
 
 ;; This library is free software; you can redistribute it and/or
 ;; modify it under the terms of the GNU Lesser General Public
@@ -39,18 +39,18 @@
   #:use-module (g-golf glib main-event-loop) ;; for g-source-remove
   #:use-module (g-golf hl-api glib)
   #:use-module (rnrs bytevectors)            ;; for bytevectors
-  #:export (await-g-read-suspendable
-	    await-g-getline
-	    await-g-geteveryline
-	    await-g-getsomelines
-	    await-g-getblock
-	    await-g-geteveryblock
-	    await-g-getsomeblocks
-	    await-g-g-write-suspendable
-	    await-g-put-bytevector
-	    await-g-put-string
-	    await-g-accept
-	    await-g-connect))
+  #:export (await-glib-read-suspendable
+	    await-glib-getline
+	    await-glib-geteveryline
+	    await-glib-getsomelines
+	    await-glib-getblock
+	    await-glib-geteveryblock
+	    await-glib-getsomeblocks
+	    await-glib-g-write-suspendable
+	    await-glib-put-bytevector
+	    await-glib-put-string
+	    await-glib-accept
+	    await-glib-connect))
 
 
 (install-suspendable-ports!)
@@ -96,7 +96,7 @@
 ;; the glib main loop.
 ;;
 ;; This procedure is first available in version 0.19 of this library.
-(define (await-g-read-suspendable await resume port proc)
+(define (await-glib-read-suspendable await resume port proc)
   (define id #f)
   (define (read-waiter p)
     (when (not id)
@@ -131,60 +131,60 @@
 
 ;; This procedure is provided mainly to retain compatibility with the
 ;; guile-a-sync library for guile-2.0, because it is trivial to
-;; implement with await-g-read-suspendable (and is implemented by
-;; await-g-read-suspendable).
+;; implement with await-glib-read-suspendable (and is implemented by
+;; await-glib-read-suspendable).
 ;;
 ;; It is intended to be called in a waitable procedure invoked by
 ;; a-sync, and reads a line of text from a non-blocking suspendable
 ;; port and returns it (without the terminating '\n' character).  See
-;; the documentation on the await-g-read-suspendable procedure for
+;; the documentation on the await-glib-read-suspendable procedure for
 ;; further particulars about this procedure.
 ;;
 ;; This procedure is first available in version 0.19 of this library.
-(define (await-g-getline await resume port)
-  (await-g-read-suspendable await resume port
-			    (lambda (p)
-			      (read-line p))))
+(define (await-glib-getline await resume port)
+  (await-glib-read-suspendable await resume port
+			       (lambda (p)
+				 (read-line p))))
 
 ;; This procedure is provided mainly to retain compatibility with the
 ;; guile-a-sync library for guile-2.0, because it is trivial to
-;; implement with await-g-read-suspendable (and is implemented by
-;; await-g-read-suspendable).
+;; implement with await-glib-read-suspendable (and is implemented by
+;; await-glib-read-suspendable).
 ;;
 ;; It is intended to be called within a waitable procedure invoked by
 ;; a-sync (which supplies the 'await' and 'resume' arguments), and
 ;; will apply 'proc' to every complete line of text received (without
 ;; the terminating '\n' character).  The watch will not end until
-;; end-of-file or an exceptional condition ('pri) is reached.  In
-;; the event of that happening, this procedure will end and return an
+;; end-of-file or an exceptional condition ('pri) is reached.  In the
+;; event of that happening, this procedure will end and return an
 ;; end-of-file object or #f respectively.
 ;;
 ;; When 'proc' executes, 'await' and 'resume' will still be in use by
 ;; this procedure, so they may not be reused by 'proc' (even though
 ;; 'proc' runs in the event loop thread).
 ;;
-;; See the documentation on the await-g-read-suspendable procedure for
-;; further particulars about this procedure.
+;; See the documentation on the await-glib-read-suspendable procedure
+;; for further particulars about this procedure.
 ;;
 ;; This procedure is first available in version 0.19 of this library.
-(define (await-g-geteveryline await resume port proc)
-  (await-g-read-suspendable await resume port
-			    (lambda (p)
-			      (let next ((line (read-line p)))
-				(if (or (eof-object? line)
-					(not line))
-				    line
-				    (begin
-				      (proc line)
-				      (next (read-line p))))))))
+(define (await-glib-geteveryline await resume port proc)
+  (await-glib-read-suspendable await resume port
+			       (lambda (p)
+				 (let next ((line (read-line p)))
+				   (if (or (eof-object? line)
+					   (not line))
+				       line
+				       (begin
+					 (proc line)
+					 (next (read-line p))))))))
 
 ;; This procedure is intended to be called within a waitable procedure
 ;; invoked by a-sync (which supplies the 'await' and 'resume'
-;; arguments), and does the same as await-g-geteveryline, except that
-;; it provides a second argument to 'proc', namely an escape
+;; arguments), and does the same as await-glib-geteveryline, except
+;; that it provides a second argument to 'proc', namely an escape
 ;; continuation which can be invoked by 'proc' to cause the procedure
 ;; to return before end-of-file is reached.  Behavior is identical to
-;; await-g-geteveryline if the continuation is not invoked.
+;; await-glib-geteveryline if the continuation is not invoked.
 ;;
 ;; This procedure will apply 'proc' to every complete line of text
 ;; received (without the terminating '\n' character).  The watch will
@@ -198,27 +198,27 @@
 ;; this procedure, so they may not be reused by 'proc' (even though
 ;; 'proc' runs in the event loop thread).
 ;;
-;; See the documentation on the await-g-read-suspendable procedure for
-;; further particulars about this procedure.
+;; See the documentation on the await-glib-read-suspendable procedure
+;; for further particulars about this procedure.
 ;;
 ;; This procedure is first available in version 0.19 of this library.
-(define (await-g-getsomelines await resume port proc)
-  (await-g-read-suspendable await resume port
-			    (lambda (p)
-			      (call/ec
-			       (lambda (k)
-				 (let next ((line (read-line p)))
-				   (if (or (eof-object? line)
-					   (not line))
-				       line
-				       (begin
-					 (proc line k)
-					 (next (read-line p))))))))))
+(define (await-glib-getsomelines await resume port proc)
+  (await-glib-read-suspendable await resume port
+			       (lambda (p)
+				 (call/ec
+				  (lambda (k)
+				    (let next ((line (read-line p)))
+				      (if (or (eof-object? line)
+					      (not line))
+					  line
+					  (begin
+					    (proc line k)
+					    (next (read-line p))))))))))
 
 ;; This procedure is provided mainly to retain compatibility with the
 ;; guile-a-sync library for guile-2.0, because an implementation is
-;; trivial to implement with await-g-read-suspendable (and is
-;; implemented by await-g-read-suspendable).
+;; trivial to implement with await-glib-read-suspendable (and is
+;; implemented by await-glib-read-suspendable).
 ;;
 ;; It is intended to be called in a waitable procedure invoked by
 ;; a-sync, and reads a block of data, such as a binary record, of size
@@ -231,31 +231,32 @@
 ;; encountered without any bytes of data, a pair with eof-object as
 ;; car and #f as cdr will be returned.
 ;;
-;; See the documentation on the await-g-read-suspendable procedure for
-;; further particulars about this procedure.
+;; See the documentation on the await-glib-read-suspendable procedure
+;; for further particulars about this procedure.
 ;;
 ;; This procedure is first available in version 0.19 of this library.
-(define (await-g-getblock await resume port size)
+(define (await-glib-getblock await resume port size)
   (define bv (make-bytevector size))
   (define index 0)
-  (await-g-read-suspendable await resume port
-			    (lambda (p)
-			      (let next ((u8 (get-u8 p)))
-				(if (eof-object? u8)
-				    (if (= index 0)
-					(cons u8 #f)
-					(cons bv index))
-				    (begin
-				      (bytevector-u8-set! bv index u8)
-				      (set! index (1+ index))
-				      (if (= index size)
-					  (cons bv size)
-					  (next (get-u8 p)))))))))
+  (await-glib-read-suspendable await resume port
+			       (lambda (p)
+				 (let next ((u8 (get-u8 p)))
+				   (if (eof-object? u8)
+				       (if (= index 0)
+					   (cons u8 #f)
+					   (cons bv index))
+				       (begin
+					 (bytevector-u8-set! bv index u8)
+					 (set! index (1+ index))
+					 (if (= index size)
+					     (cons bv size)
+					     (next (get-u8 p)))))))))
 
 ;; This procedure is provided mainly to retain compatibility with the
 ;; guile-a-sync library for guile-2.0, because it is trivial to
-;; implement this kind of functionality with await-g-read-suspendable
-;; (and is implemented by await-g-read-suspendable).
+;; implement this kind of functionality with
+;; await-glib-read-suspendable (and is implemented by
+;; await-glib-read-suspendable).
 ;;
 ;; It is intended to be called within a waitable procedure invoked by
 ;; a-sync (which supplies the 'await' and 'resume' arguments), and
@@ -280,38 +281,38 @@
 ;; this procedure, so they may not be reused by 'proc' (even though
 ;; 'proc' runs in the event loop thread).
 ;;
-;; See the documentation on the await-g-read-suspendable procedure for
-;; further particulars about this procedure.
+;; See the documentation on the await-glib-read-suspendable procedure
+;; for further particulars about this procedure.
 ;;
 ;; This procedure is first available in version 0.19 of this library.
-(define (await-g-geteveryblock await resume port size proc)
+(define (await-glib-geteveryblock await resume port size proc)
   ;; we cannot use get-bytevector-n! because it is not async-safe in
   ;; suspendable ports, so build the bytevector by hand
   (define bv (make-bytevector size))
   (define index 0)
-  (await-read-suspendable! await resume port
-			   (lambda (p)
-			     (let next ((u8 (get-u8 p)))
-			       (if (eof-object? u8)
-				   (begin
-				     (when (> index 0)
-				       (proc bv index))
-				     u8)
-				   (begin
-				     (bytevector-u8-set! bv index u8)
-				     (set! index (1+ index))
-				     (when (= index size)
-				       (set! index 0)
-				       (proc bv size))
-				     (next (get-u8 p))))))))
+  (await-glib-read-suspendable await resume port
+			       (lambda (p)
+				 (let next ((u8 (get-u8 p)))
+				   (if (eof-object? u8)
+				       (begin
+					 (when (> index 0)
+					   (proc bv index))
+					 u8)
+				       (begin
+					 (bytevector-u8-set! bv index u8)
+					 (set! index (1+ index))
+					 (when (= index size)
+					   (set! index 0)
+					   (proc bv size))
+					 (next (get-u8 p))))))))
 
 ;; This procedure is intended to be called within a waitable procedure
 ;; invoked by a-sync (which supplies the 'await' and 'resume'
-;; arguments), and does the same as await-g-geteveryblock, except that
-;; it provides a third argument to 'proc', namely an escape
+;; arguments), and does the same as await-glib-geteveryblock, except
+;; that it provides a third argument to 'proc', namely an escape
 ;; continuation which can be invoked by 'proc' to cause the procedure
 ;; to return before end-of-file is reached.  Behavior is identical to
-;; await-g-geteveryblock if the continuation is not invoked.
+;; await-glib-geteveryblock if the continuation is not invoked.
 ;;
 ;; This procedure will apply 'proc' to any block of data received,
 ;; such as a binary record.  'proc' should be a procedure taking three
@@ -337,32 +338,32 @@
 ;; this procedure, so they may not be reused by 'proc' (even though
 ;; 'proc' runs in the event loop thread).
 ;;
-;; See the documentation on the await-g-read-suspendable procedure for
-;; further particulars about this procedure.
+;; See the documentation on the await-glib-read-suspendable procedure
+;; for further particulars about this procedure.
 ;;
 ;; This procedure is first available in version 0.19 of this library.
-(define (await-g-getsomeblocks await resume port size proc)
+(define (await-glib-getsomeblocks await resume port size proc)
   ;; we cannot use get-bytevector-n! because it is not async-safe in
   ;; suspendable ports, so build the bytevector by hand
   (define bv (make-bytevector size))
   (define index 0)
-  (await-read-suspendable! await resume port
-			   (lambda (p)
-			     (call/ec
-			      (lambda (k)
-				(let next ((u8 (get-u8 p)))
-				  (if (eof-object? u8)
-				      (begin
-					(when (> index 0)
-					  (proc bv index k))
-					u8)
-				      (begin
-					(bytevector-u8-set! bv index u8)
-					(set! index (1+ index))
-					(when (= index size)
-					  (set! index 0)
-					  (proc bv size k))
-					(next (get-u8 p))))))))))
+  (await-glib-read-suspendable await resume port
+			       (lambda (p)
+				 (call/ec
+				  (lambda (k)
+				    (let next ((u8 (get-u8 p)))
+				      (if (eof-object? u8)
+					  (begin
+					    (when (> index 0)
+					      (proc bv index k))
+					    u8)
+					  (begin
+					    (bytevector-u8-set! bv index u8)
+					    (set! index (1+ index))
+					    (when (= index size)
+					      (set! index 0)
+					      (proc bv size k))
+					    (next (get-u8 p))))))))))
 
 ;; 'proc' is a procedure taking a single argument, to which the port
 ;; will be passed when it is invoked.  The purpose of 'proc' is to
@@ -392,7 +393,7 @@
 ;; the glib main loop.
 ;;
 ;; This procedure is first available in version 0.19 of this library.
-(define (await-g-write-suspendable await resume port proc)
+(define (await-glib-write-suspendable await resume port proc)
   (define id #f)
   (define (write-waiter p)
     (when (not id)
@@ -421,28 +422,29 @@
 
 ;; This procedure is provided mainly to retain compatibility with the
 ;; guile-a-sync library for guile-2.0, because it is trivial to
-;; implement with await-g-write-suspendable (and is implemented by
-;; await-g-write-suspendable).
+;; implement with await-glib-write-suspendable (and is implemented by
+;; await-glib-write-suspendable).
 ;;
 ;; It is intended to be called in a waitable procedure invoked by
 ;; a-sync, and will write a bytevector to the port.
 ;;
-;; See the documentation on the await-g-write-suspendable procedure
+;; See the documentation on the await-glib-write-suspendable procedure
 ;; for further particulars about this procedure.
 ;;
 ;; This procedure is first available in version 0.19 of this library.
-(define (await-g-put-bytevector await resume port bv)
-  (await-g-write-suspendable await resume port
-			     (lambda (p)
-			       (put-bytevector p bv)
-			       ;; enforce a flush when the current
-			       ;; write-waiter is still in operation
-			       (force-output p))))
+(define (await-glib-put-bytevector await resume port bv)
+  (await-glib-write-suspendable await resume port
+				(lambda (p)
+				  (put-bytevector p bv)
+				  ;; enforce a flush when the current
+				  ;; write-waiter is still in
+				  ;; operation
+				  (force-output p))))
 
 ;; This procedure is provided mainly to retain compatibility with the
 ;; guile-a-sync library for guile-2.0, because it is trivial to
-;; implement with await-g-write-suspendable (and is implemented by
-;; await-g-write-suspendable).
+;; implement with await-glib-write-suspendable (and is implemented by
+;; await-glib-write-suspendable).
 ;;
 ;; It is intended to be called in a waitable procedure invoked by
 ;; a-sync, and will write a string to the port.
@@ -451,22 +453,23 @@
 ;; the '\r' character (as well as the '\n' character) must be embedded
 ;; in the string.
 ;;
-;; See the documentation on the await-g-write-suspendable procedure
+;; See the documentation on the await-glib-write-suspendable procedure
 ;; for further particulars about this procedure.
 ;;
 ;; This procedure is first available in version 0.19 of this library.
-(define (await-g-put-string await resume port text)
-  (await-g-write-suspendable await resume port
-			     (lambda (p)
-			       (put-string p text)
-			       ;; enforce a flush when the current
-			       ;; write-waiter is still in operation
-			       (force-output p))))
+(define (await-glib-put-string await resume port text)
+  (await-glib-write-suspendable await resume port
+				(lambda (p)
+				  (put-string p text)
+				  ;; enforce a flush when the current
+				  ;; write-waiter is still in
+				  ;; operation
+				  (force-output p))))
 
 ;; This procedure is provided mainly to retain compatibility with the
 ;; guile-a-sync library for guile-2.0, because it is trivial to
-;; implement with await-g-read-suspendable (and is implemented by
-;; await-g-read-suspendable).
+;; implement with await-glib-read-suspendable (and is implemented by
+;; await-glib-read-suspendable).
 ;;
 ;; This procedure will start a watch on listening socket 'sock' for a
 ;; connection.  'sock' must be a non-blocking socket port.  This
@@ -477,19 +480,19 @@
 ;; waitable procedure invoked by a-sync (which supplies the 'await'
 ;; and 'resume' arguments).
 ;;
-;; See the documentation on the await-g-read-suspendable procedure for
+;; See the documentation on the await-glib-read-suspendable procedure for
 ;; further particulars about this procedure.
 ;;
 ;; This procedure is first available in version 0.19 of this library.
-(define (await-g-accept await resume sock)
-  (await-g-read-suspendable await resume sock
-			    (lambda (s)
-			      (accept s))))
+(define (await-glib-accept await resume sock)
+  (await-glib-read-suspendable await resume sock
+			       (lambda (s)
+				 (accept s))))
 
 ;; This procedure is provided mainly to retain compatibility with the
 ;; guile-a-sync library for guile-2.0, because it is trivial to
-;; implement with await-g-write-suspendable (and is implemented by
-;; await-g-write-suspendable).
+;; implement with await-glib-write-suspendable (and is implemented by
+;; await-glib-write-suspendable).
 ;;
 ;; This procedure will connect socket 'sock' to a remote host.
 ;; Particulars of the remote host are given by 'args' which are the
@@ -503,14 +506,14 @@
 ;; Where a connection request is immediately followed by a write to
 ;; the remote server (say, a get request), the call to 'connect' and
 ;; to 'put-string' can be combined in a single procedure passed to
-;; await-g-write-suspendable.
+;; await-glib-write-suspendable.
 ;;
-;; See the documentation on the await-g-write-suspendable procedure
+;; See the documentation on the await-glib-write-suspendable procedure
 ;; for further particulars about this procedure.
 ;;
 ;; This procedure is first available in version 0.19 of this library.
-(define (await-g-connect await resume sock . args)
-  (await-g-write-suspendable await resume sock
-			     (lambda (s)
-			       (apply connect s args)
-			       #t)))
+(define (await-glib-connect await resume sock . args)
+  (await-glib-write-suspendable await resume sock
+				(lambda (s)
+				  (apply connect s args)
+				  #t)))
