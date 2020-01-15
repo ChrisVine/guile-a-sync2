@@ -1,13 +1,13 @@
 ## Process this file with automake to produce Makefile.in
 
-SUBDIRS = g-golf
+SUBDIRS = g-golf guile-gi
 
 SOURCES = coroutines.scm event-loop.scm compose.scm await-ports.scm meeting.scm thread-pool.scm
 
 FULL_SOURCES = $(SOURCES) monotonic-time.scm
 
 moduledir = $(GUILE_SITEDIR)/a-sync
-module_DATA = $(FULL_SOURCES) gnome-glib.scm g-golf.scm
+module_DATA = $(FULL_SOURCES) gnome-glib.scm g-golf.scm guile-gi.scm
 
 if COMPILE_TO_BYTECODE
 GOBJECTS = $(FULL_SOURCES:%.scm=%.go)
@@ -36,4 +36,5 @@ install-data-hook:
 	for files in $(GOBJECTS); do touch -c $(gobjectsdir)/$$files; done
 endif
 
-EXTRA_DIST = $(SOURCES) gnome-glib.scm g-golf.scm monotonic-time.scm.in a-sync-compile.sh
+EXTRA_DIST = $(SOURCES) gnome-glib.scm g-golf.scm guile-gi.scm \
+	     monotonic-time.scm.in a-sync-compile.sh

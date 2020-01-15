@@ -49,6 +49,7 @@ dnl define MAKE for subdirectories
 AC_PROG_MAKE_SET
 
 AC_CONFIG_FILES([ Makefile a-sync/Makefile a-sync/g-golf/Makefile \
-                  lib/Makefile docs/Makefile tests/Makefile \
-                  a-sync/monotonic-time.scm guile-a-sync$GUILE_VER.pc ])
+                  a-sync/guile-gi/Makefile lib/Makefile docs/Makefile \
+		  tests/Makefile a-sync/monotonic-time.scm \
+		  guile-a-sync$GUILE_VER.pc ])
 AC_OUTPUT
