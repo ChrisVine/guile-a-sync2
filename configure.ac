@@ -50,6 +50,7 @@ AC_PROG_MAKE_SET
 
 AC_CONFIG_FILES([ Makefile a-sync/Makefile a-sync/g-golf/Makefile \
                   a-sync/guile-gi/Makefile lib/Makefile docs/Makefile \
-		  tests/Makefile a-sync/monotonic-time.scm \
+		  tests/Makefile tests/g-golf/Makefile \
+		  tests/guile-gi/Makefile a-sync/monotonic-time.scm \
 		  guile-a-sync$GUILE_VER.pc ])
 AC_OUTPUT
