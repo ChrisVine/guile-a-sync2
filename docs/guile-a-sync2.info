@@ -3940,7 +3940,7 @@ procedures:
           			   "The line was: ~A\n"
           			   (await-glib-getline await resume
           					       port)))
-          	  (g-main-loop-quit main-loop)))
+          	  (a-sync-glib-quit main-loop)))
           (g-main-loop-run main-loop)
 
  -- Scheme Procedure: await-glib-geteveryline await resume port proc
@@ -3981,7 +3981,7 @@ procedures:
           				       (simple-format #t
           						      "The line was: ~A\n"
           						      line))))
-          	  (g-main-loop-quit main-loop)))
+          	  (a-sync-glib-quit main-loop)))
           (g-main-loop-run main-loop)
 
  -- Scheme Procedure: await-glib-getsomelines await resume port proc
@@ -4025,7 +4025,7 @@ procedures:
           				       (simple-format #t
           						      "The line was: ~A\n"
           						      line))))
-          	  (g-main-loop-quit main-loop)))
+          	  (a-sync-glib-quit main-loop)))
           (g-main-loop-run main-loop)
 
  -- Scheme Procedure: await-glib-getblock await resume port size
@@ -4200,7 +4200,7 @@ procedures:
           		       (begin
           			 ;; possibly rethrow the exception
           			 (apply throw args)))))
-          	  (g-main-loop-quit main-loop)))
+          	  (a-sync-glib-quit main-loop)))
           (g-main-loop-run main-loop)
 
  -- Scheme Procedure: await-glib-put-string await resume port text
@@ -4239,7 +4239,7 @@ procedures:
           		       (begin
           			 ;; possibly rethrow the exception
           			 (apply throw args)))))
-          	  (g-main-loop-quit main-loop)))
+          	  (a-sync-glib-quit main-loop)))
           (g-main-loop-run main-loop)
 
  -- Scheme Procedure: await-glib-accept await resume sock
@@ -4343,7 +4343,7 @@ glib-meeting form:
       (lambda (await resume)
         (let ((lst (parallel-map await resume do-work (list 1 2 3 4 5))))
           (display lst)(newline)
-          (g-main-loop-quit main-loop))))
+          (a-sync-glib-quit main-loop))))
      (g-main-loop-run main-loop)
 
    The (a-sync meeting) module provides the following procedures:
@@ -5011,7 +5011,7 @@ procedures:
           			   "The line was: ~A\n"
           			   (await-glib-getline await resume
           					       port)))
-          	  (quit main-loop)))
+          	  (a-sync-glib-quit main-loop)))
           (run main-loop)
 
  -- Scheme Procedure: await-glib-geteveryline await resume port proc
@@ -5052,7 +5052,7 @@ procedures:
           				       (simple-format #t
           						      "The line was: ~A\n"
           						      line))))
-          	  (quit main-loop)))
+          	  (a-sync-glib-quit main-loop)))
           (run main-loop)
 
  -- Scheme Procedure: await-glib-getsomelines await resume port proc
@@ -5096,7 +5096,7 @@ procedures:
           				       (simple-format #t
           						      "The line was: ~A\n"
           						      line))))
-          	  (quit main-loop)))
+          	  (a-sync-glib-quit main-loop)))
           (run main-loop)
 
  -- Scheme Procedure: await-glib-getblock await resume port size
@@ -5271,7 +5271,7 @@ procedures:
           		       (begin
           			 ;; possibly rethrow the exception
           			 (apply throw args)))))
-          	  (quit main-loop)))
+          	  (a-sync-glib-quit main-loop)))
           (run main-loop)
 
  -- Scheme Procedure: await-glib-put-string await resume port text
@@ -5310,7 +5310,7 @@ procedures:
           		       (begin
           			 ;; possibly rethrow the exception
           			 (apply throw args)))))
-          	  (quit main-loop)))
+          	  (a-sync-glib-quit main-loop)))
           (run main-loop)
 
  -- Scheme Procedure: await-glib-accept await resume sock
@@ -5418,7 +5418,7 @@ glib-meeting form:
       (lambda (await resume)
         (let ((lst (parallel-map await resume do-work (list 1 2 3 4 5))))
           (display lst)(newline)
-          (quit main-loop))))
+          (a-sync-glib-quit main-loop))))
      (run main-loop)
 
    The (a-sync meeting) module provides the following procedures:
@@ -5568,7 +5568,7 @@ Node: g-golf meeting218582
 Node: guile-gi227524
 Node: guile-gi base227984
 Node: guile-gi await ports249840
-Node: guile-gi meeting271632
+Node: guile-gi meeting271692
 
 End Tag Table
 
