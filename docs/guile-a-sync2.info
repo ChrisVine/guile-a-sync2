@@ -474,8 +474,8 @@ The (a-sync coroutines) module provides the following procedures:
           (event-loop-run!)
 
      The a-sync procedure can be used with any event loop, including the
-     glib event loop provided by guile-gnome and so with gtk+ callbacks,
-     and with the event loop in the event-loop module.
+     glib main loop provided by g-golf and guile-gi and so with gtk+
+     callbacks, and with the event loop in the event-loop module.
 
      For a further overview of the operation of 'a-sync', see the *note
      general overview: overview.
@@ -2349,7 +2349,8 @@ appears to be a garbage collection issue, and if you call the procedure
 often enough in a single or multi-threaded program it will eventually
 segfault.  g-io-add-watch is also broken in guile-gnome, so this library
 uses its own glib-add-watch procedure which is exported publicly in case
-it is useful to users.
+it is useful to users.  In consequence, consider using the support for
+g-golf and guile-gi which is provided by guile-a-sync2 instead.
 
    Most of the scheme files provided by this library are by default
 compiled by this library to bytecode.  That is not the case with this
@@ -3410,7 +3411,7 @@ File: guile-a-sync2.info,  Node: g-golf,  Next: g-golf base,  Up: Top
 
 * g-golf base::        (a-sync g-golf base) module - provides base procedures for use with g-golf
 * g-golf await ports:: (a-sync g-golf await-ports) module - provides procedures for using suspendable ports with g-golf
-* g-golf meeting::     (a-sync g-golf meeting) - provides for synchronization between a-sync or compose-a-sync blocks when using g-golf
+* g-golf meeting::     (a-sync g-golf meeting) module - provides for synchronization between a-sync or compose-a-sync blocks when using g-golf
 
 
 File: guile-a-sync2.info,  Node: g-golf base,  Next: g-golf await ports,  Up: g-golf
@@ -4486,7 +4487,7 @@ File: guile-a-sync2.info,  Node: guile-gi,  Next: guile-gi base,  Up: Top
 
 * guile-gi base::        (a-sync guile-gi base) module - provides base procedures for use with guile-gi
 * guile-gi await ports:: (a-sync guile-gi await-ports) module - provides procedures for using suspendable ports with guile-gi
-* guile-gi meeting::     (a-sync guile-gi meeting) - provides for synchronization between a-sync or compose-a-sync blocks when using guile-gi
+* guile-gi meeting::     (a-sync guile-gi meeting) module - provides for synchronization between a-sync or compose-a-sync blocks when using guile-gi
 
 
 File: guile-a-sync2.info,  Node: guile-gi base,  Next: guile-gi await ports,  Up: guile-gi
@@ -5564,21 +5565,21 @@ Tag Table:
 Node: Top87
 Node: overview1717
 Node: coroutines5021
-Node: event loop23413
-Node: await ports70834
-Node: thread pool98347
-Node: monotonic time120029
-Node: gnome glib121465
-Node: compose150317
-Node: meeting158305
-Node: g-golf174240
-Node: g-golf base174678
-Node: g-golf await ports196668
-Node: g-golf meeting218823
-Node: guile-gi227765
-Node: guile-gi base228225
-Node: guile-gi await ports250081
-Node: guile-gi meeting272174
+Node: event loop23420
+Node: await ports70841
+Node: thread pool98354
+Node: monotonic time120036
+Node: gnome glib121472
+Node: compose150436
+Node: meeting158424
+Node: g-golf174359
+Node: g-golf base174804
+Node: g-golf await ports196794
+Node: g-golf meeting218949
+Node: guile-gi227891
+Node: guile-gi base228358
+Node: guile-gi await ports250214
+Node: guile-gi meeting272307
 
 End Tag Table
 
