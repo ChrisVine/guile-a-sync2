@@ -45,18 +45,22 @@
 ;; connect procedures are also safe.
 ;;
 ;; Some others are not at present safe to use with suspendable ports,
-;; including get-bytevector-n!, get-bytevector-some,
-;; get-bytevector-all, get-string-n, read, write and display.
+;; including get-bytevector-all, get-string-n, get-string-n!, write
+;; and display.  In addition, get-bytevector-n!, get-bytevector-some
+;; and get-bytevector-some! are not safe until guile version 2.2.5,
+;; and the read procedure is not safe until guile version 3.0.6.
+
 ;; Unfortunately this means that some of the procedures in guile's web
 ;; module cannot be used with suspendable ports.  build-uri,
 ;; build-request and cognates are fine, as is write-request if no
 ;; custom header writers are imported, but the read-response-body
-;; procedure is not.  This means that http-get, http-put and so on
-;; cannot normally be used: an example of a safe procedure for reading
-;; http responses is in the example-client.scm file in the docs
-;; directory.  In addition, guile-gnutls ports are not suspendable.
-;; (One answer where only a few gnutls sessions are to be run
-;; concurrently is to run each such session in a separate thread using
+;; procedure is not unless the guile version is 2.2.5 or later and
+;; either the Content-Length header of the response is set or the
+;; Transfer-Encoding header is set as chunked.  This means that
+;; http-get, http-put and so on cannot always be used in suspendable
+;; code.  In addition, guile-gnutls ports are not suspendable.  (One
+;; answer where only a few gnutls sessions are to be run concurrently
+;; is to run each such session in a separate thread using
 ;; await-task-in-thread!, await-task-in-thread-pool! or
 ;; await-task-in-event-loop!, and to use synchronous guile-gnutls i/o
 ;; in the session.)
