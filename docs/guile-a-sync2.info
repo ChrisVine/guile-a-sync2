@@ -1388,16 +1388,14 @@ read procedure is not safe until guile version 3.0.6.
    Unfortunately this means that some of the procedures in guile's web
 module cannot be used with suspendable ports.  build-uri, build-request
 and cognates are fine, as is write-request if no custom header writers
-are imported, but the read-response-body procedure is not unless the
-guile version is 2.2.5 or later and either the Content-Length header of
-the response is set or the Transfer-Encoding header is set as chunked.
-This means that http-get, http-put and so on cannot always be used in
-suspendable code.  In addition, guile-gnutls ports are not suspendable.
-(One answer where only a few gnutls sessions are to be run concurrently
-is to run each such session in a separate thread using
-await-task-in-thread!, await-task-in-thread-pool!  or
-await-task-in-event-loop!, and to use synchronous guile-gnutls i/o in
-the session.)
+are imported, but the read-response-body procedure is not because it
+invokes get-bytevector-all.  This means that (unless streaming)
+http-get, http-put and so on are unsafe in suspendable code.  In
+addition, guile-gnutls ports are not suspendable.  (One answer where
+only a few gnutls sessions are to be run concurrently is to run each
+such session in a separate thread using await-task-in-thread!,
+await-task-in-thread-pool!  or await-task-in-event-loop!, and to use
+synchronous guile-gnutls i/o in the session.)
 
    Including this module will automatically enable suspendable ports.
 The uninstall-suspendable-ports!  procedure should not subsequently be
@@ -5572,19 +5570,19 @@ Node: overview1717
 Node: coroutines5021
 Node: event loop23420
 Node: await ports70841
-Node: thread pool98561
-Node: monotonic time120243
-Node: gnome glib121679
-Node: compose150643
-Node: meeting158631
-Node: g-golf174566
-Node: g-golf base175011
-Node: g-golf await ports197001
-Node: g-golf meeting219156
-Node: guile-gi228098
-Node: guile-gi base228565
-Node: guile-gi await ports250421
-Node: guile-gi meeting272514
+Node: thread pool98456
+Node: monotonic time120138
+Node: gnome glib121574
+Node: compose150538
+Node: meeting158526
+Node: g-golf174461
+Node: g-golf base174906
+Node: g-golf await ports196896
+Node: g-golf meeting219051
+Node: guile-gi227993
+Node: guile-gi base228460
+Node: guile-gi await ports250316
+Node: guile-gi meeting272409
 
 End Tag Table
 
